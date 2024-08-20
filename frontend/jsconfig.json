@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+      "baseUrl": ".", // Set the base URL for the project
+      "paths": {
+        "@/*": ["src/*"] // Alias @ to point to the src folder
+      }
+    },
+    "include": ["src/**/*"] // Include all files within the src directory
+  }
+  
