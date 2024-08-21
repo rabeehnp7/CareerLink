@@ -7,6 +7,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import axios from "axios";
 import { USER_API_ENDPOINT } from "../constants/constants";
+import { useDispatch, useSelector } from "react-redux";
+import { setLoading, setUser } from "@/store/authSlice";
+import { Loader2 } from "lucide-react";
 
 
 function Login() {
@@ -19,9 +22,12 @@ function Login() {
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
+  const {loading}=useSelector((state)=>state.auth)
+  const dispatch=useDispatch()
   const submitHandler =async (e)=>{
     e.preventDefault()
     try {
+        dispatch(setLoading(true))
         const res=await axios.post(`${USER_API_ENDPOINT}/login`,input,{
             headers:{
                 "Content-Type":"application/json"
@@ -30,12 +36,15 @@ function Login() {
         })
         console.log(res)
         if(res.data.success){
+          dispatch(setUser(res.data.user))
             navigate("/")
             toast.success(res.data.message)
         }
     } catch (error) {
         const errorMessage = error.response?.data?.message || error.message
         toast.error(errorMessage)
+    }finally{
+        dispatch(setLoading(false))
     }
   }
 
@@ -97,12 +106,17 @@ function Login() {
               </div>
             </div>
           </div>
-          <Button
-            type="submit"
-            className="w-full py-2 mt-4 bg-gray-800 text-white hover:bg-gray-900"
-          >
-            Login
-          </Button>
+          {loading ? (
+            <Button className="w-full my-4">
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />Please wait
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              className="w-full py-2 mt-4 bg-gray-800 text-white hover:bg-gray-900">
+              Login
+            </Button>
+          )}
 
           <div className="text-sm mt-4 text-center">
             Don't have an account? <Link to="/signup" className="text-blue-500 hover:underline">Signup</Link>

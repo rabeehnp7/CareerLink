@@ -7,6 +7,9 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { USER_API_ENDPOINT } from "../constants/constants";
 import { toast } from "sonner";
+import { useDispatch, useSelector } from "react-redux";
+import { setLoading } from "@/store/authSlice";
+import { Loader2 } from "lucide-react";
 
 function Signup() {
   const [input, setInput] = useState({
@@ -15,42 +18,47 @@ function Signup() {
     phoneNumber: "",
     password: "",
     role: "student",
-    file:""
+    file: "",
   });
-  const navigate=useNavigate()
-  const fileHandler =(e)=>{
-    setInput({...input, file:e.target.files?.[0]})
-  }
+  const { loading } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const fileHandler = (e) => {
+    setInput({ ...input, file: e.target.files?.[0] });
+  };
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
-  const formData = new FormData(); 
-  formData.append("fullName",input.fullName)
+  const formData = new FormData();
+  formData.append("fullName", input.fullName);
   formData.append("email", input.email);
   formData.append("phoneNumber", input.phoneNumber);
   formData.append("password", input.password);
   formData.append("role", input.role);
-  if(input.file){
-    formData.append("file",input.file)
+  if (input.file) {
+    formData.append("file", input.file);
   }
-  const submitHandler = async(e)=>{
-    e.preventDefault()
+  const dispatch = useDispatch();
+  const submitHandler = async (e) => {
+    e.preventDefault();
     try {
-        const res=await axios.post(`${USER_API_ENDPOINT}/register`,formData,{
-            headers:{
-                "Content-Type":"multipart/form-data"
-            },
-            withCredentials:true
-        })
-        if(res.data.success){
-            navigate("/login")
-            toast.success(res.data.message)
-        }
+      dispatch(setLoading(true));
+      const res = await axios.post(`${USER_API_ENDPOINT}/register`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
+      });
+      if (res.data.success) {
+        navigate("/login");
+        toast.success(res.data.message);
+      }
     } catch (error) {
-        const errorMessage = error.response?.data?.message || error.message
-        toast.error(errorMessage)
+      const errorMessage = error.response?.data?.message || error.message;
+      toast.error(errorMessage);
+    } finally {
+      dispatch(setLoading(false));
     }
-  }
+  };
 
   return (
     <div>
@@ -61,9 +69,11 @@ function Signup() {
           className="w-full max-w-md border border-gray-200 rounded-md p-6 my-10 shadow-lg"
         >
           <h1 className="font-bold text-2xl mb-6">Sign Up</h1>
-          
+
           <div className="mb-4">
-            <Label htmlFor="full-name" className="block text-left mb-1">Full Name</Label>
+            <Label htmlFor="full-name" className="block text-left mb-1">
+              Full Name
+            </Label>
             <Input
               id="full-name"
               type="text"
@@ -75,7 +85,9 @@ function Signup() {
           </div>
 
           <div className="mb-4">
-            <Label htmlFor="email" className="block text-left mb-1">E-mail</Label>
+            <Label htmlFor="email" className="block text-left mb-1">
+              E-mail
+            </Label>
             <Input
               id="email"
               type="email"
@@ -87,7 +99,9 @@ function Signup() {
           </div>
 
           <div className="mb-4">
-            <Label htmlFor="phone-number" className="block text-left mb-1">Phone Number</Label>
+            <Label htmlFor="phone-number" className="block text-left mb-1">
+              Phone Number
+            </Label>
             <Input
               id="phone-number"
               type="tel"
@@ -99,7 +113,9 @@ function Signup() {
           </div>
 
           <div className="mb-4">
-            <Label htmlFor="password" className="block text-left mb-1">Password</Label>
+            <Label htmlFor="password" className="block text-left mb-1">
+              Password
+            </Label>
             <Input
               id="password"
               type="password"
@@ -139,7 +155,12 @@ function Signup() {
           </div>
 
           <div className="mb-4 flex items-center">
-            <Label htmlFor="profile-picture" className="block text-left mb-1 mr-2">Profile Picture</Label>
+            <Label
+              htmlFor="profile-picture"
+              className="block text-left mb-1 mr-2"
+            >
+              Profile Picture
+            </Label>
             <Input
               id="profile-picture"
               accept="image/*"
@@ -149,15 +170,24 @@ function Signup() {
             />
           </div>
 
-          <Button
-            type="submit"
-            className="w-full py-2 mt-4 bg-gray-800 text-white hover:bg-gray-900"
-          >
-            Sign Up
-          </Button>
+          {loading ? (
+            <Button className="w-full my-4">
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />Please wait
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              className="w-full py-2 mt-4 bg-gray-800 text-white hover:bg-gray-900"
+            >
+              Sign Up
+            </Button>
+          )}
 
           <div className="text-sm mt-4 text-center">
-            Already have an account? <Link to="/login" className="text-blue-500 hover:underline">Login</Link>
+            Already have an account?{" "}
+            <Link to="/login" className="text-blue-500 hover:underline">
+              Login
+            </Link>
           </div>
         </form>
       </div>

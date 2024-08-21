@@ -8,9 +8,10 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "../ui/button";
 import { LogOut, User2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function Navbar() {
-    const user=false
+    const {user}=useSelector((state)=>state.auth)
   return (
     <div className="bg-white">
       <div className="flex items-center justify-between mx-auto max-w-7xl h-16">
@@ -21,9 +22,9 @@ function Navbar() {
         </div>
         <div>
           <ul className="flex font-medium items-center gap-5">
-            <li>Home</li>
-            <li>Jobs</li>
-            <li>Browse</li>
+            <li><Link to='/'>Home</Link></li>
+            <li><Link to='/jobs'>Jobs</Link></li>
+            <li><Link to='/browse'>Browse</Link></li>
             {
                 !user ? (
                     <div className="flex items-center gap-2">
@@ -42,18 +43,18 @@ function Navbar() {
                                     <AvatarImage src="https://github.com/shadcn.png" />
                                   </Avatar>
                                   <div>
-                                  <h4 className="font medium">Rabeeh</h4>
-                                  <p className="text-sm text-muted-foreground">lorem ipsum</p>
+                                  <h4 className="font medium">{user.fullName}</h4>
+                                  <p className="text-sm text-muted-foreground">{user.role}</p>
                                   </div>
                                 </div>
                                 <div className="flec flex-col my-2  gap-3 text-gray-600">
                                   <div className="flex w-fit items-center gap-2 cursor-pointer">
                                   <User2/>
-                                  <Button variant="link">View Profile</Button>
+                                  <Button variant="link"><Link to='/profile'>View Profile</Link></Button>
                                   </div>
                                   <div className="flex w-fit items-center gap-2 cursor-pointer">
                                       <LogOut/>
-                                  <Button variant="link">View Profile</Button>
+                                  <Button variant="link"><Link to="/logout">Logout</Link></Button>
                                   </div>
                                 </div>
                                 </PopoverContent>
