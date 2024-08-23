@@ -1,10 +1,15 @@
 import bcrypt from "bcrypt"
 import { User } from "../models/user.model.js"
 import jwt from 'jsonwebtoken'
+import getDataUri from "../utils/datauri.js"
+import cloudinary from "../utils/cloudinary.js"
 
 export const register = async(req,res)=>{
     try {
         const {fullName,phoneNumber,email,password,role}=req.body
+        const file=req.file
+        const fileUri=getDataUri(file)
+        const cloudResponse =await cloudinary.uploader.upload(fileUri.content)
         if(!fullName || !phoneNumber || !email || !password || !role){
             return res.status(400).json({
                 message:"Fill out all the fields",
@@ -19,12 +24,16 @@ export const register = async(req,res)=>{
             })
         }
          const encryptedPass=await bcrypt.hash(password,10)
-         await User.create({
+         
+        const user= await User.create({
             fullName,
             email,
             password:encryptedPass,
             phoneNumber,
-            role
+            role,
+            profile:{
+                profilePhoto:cloudResponse.secure_url
+            }
          })
         return res.status(200).json({
             message:"Account Created Successfully",
@@ -94,8 +103,10 @@ export const logout = async (req,res)=>{
 export const updateprofile = async (req,res) =>{
     try {
         const {fullName,email,phoneNumber,skills,bio}=req.body
-        // cloudinary
+
         const file=req.file
+        const fileUri=getDataUri(file)
+        const cloudResponse =await cloudinary.uploader.upload(fileUri.content)
         let skillsArray
         if(skills) {
             skillsArray=skills.split(",")
@@ -115,7 +126,10 @@ export const updateprofile = async (req,res) =>{
         if(email) user.email=email
         if(phoneNumber) user.phoneNumber=phoneNumber
 
-        // resume updadte here
+        if(cloudResponse){
+            user.profile.resume=cloudResponse.secure_url
+            user.profile.resumeOriginalName=file.originalname
+        }
 
         await user.save()
         user={

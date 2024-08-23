@@ -1,32 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import { Edit2, Mail, Phone } from "lucide-react";
 import Navbar from "./shared/Navbar";
 import { useSelector } from "react-redux";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import AppliedJobs from "./AppliedJobs";
 import Footer from "./shared/Footer";
+import { Toaster } from "sonner";
+import ProfileEditDialog from "./ProfileEditDialog";
 
 function Profile() {
-  const { user } = useSelector((state) => state.auth);
-  user.profile.skills = [];
-
+  const { user } = useSelector((store) => store.auth);
+  const [open,setOpen]=useState(false)
   return (
     <>
       <Navbar />
       <div className="bg-gray-100 py-8">
         <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-8">
-          {/* Avatar and Name Section */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex flex-col items-center justify-center flex-grow">
               <Avatar className="w-24 h-24 mb-4">
-                <AvatarImage src="https://via.placeholder.com/150" alt="User Avatar" />
+                <AvatarImage src={user.profile.profilePhoto ? user.profile.profilePhoto : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLMI5YxZE03Vnj-s-sth2_JxlPd30Zy7yEGg&s"} alt="User Avatar" />
               </Avatar>
               <h1 className="text-3xl font-bold text-gray-800 text-center">
                 {user.fullName}
               </h1>
             </div>
             <button className="text-gray-500 hover:text-gray-700 focus:outline-none self-start">
-              <Edit2 size={20} />
+              <Edit2 onClick={()=>setOpen(true)} size={20} />
             </button>
           </div>
 
@@ -54,7 +54,7 @@ function Profile() {
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Skills</h2>
             <div className="flex flex-wrap gap-2">
-              {user?.profile.skills.length > 0 ? (
+              {user?.profile.skills?.length > 0 ? (
                 user.profile.skills.map((skill, index) => {
                   return (
                     <span
@@ -73,14 +73,16 @@ function Profile() {
 
           <div>
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Resume</h2>
-            <a href="#" className="text-blue-600 hover:underline">
-              View Resume
+            <a href={user?.profile?.resume} className="text-blue-600 hover:underline">
+              {user?.profile?.resumeOriginalName}
             </a>
           </div>
         </div>
       </div>
       <AppliedJobs/>
+      <ProfileEditDialog open={open} setOpen={setOpen}/>
       <Footer/>
+      <Toaster/>
     </>
   );
 }

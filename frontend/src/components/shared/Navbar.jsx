@@ -7,11 +7,32 @@ import {
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "../ui/button";
 import { LogOut, User2 } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "@/store/authSlice";
+import axios from "axios";
+import { USER_API_ENDPOINT } from "../constants/constants";
+import { toast } from "sonner";
 
 function Navbar() {
     const {user}=useSelector((state)=>state.auth)
+    const navigate=useNavigate()
+    const dispatch=useDispatch()
+    const logoutHandler= async()=>{
+      try {
+        const res=await axios.post(`${USER_API_ENDPOINT}/logout`,{
+          withCredentials:true
+        })
+        if(res.data.success){
+      dispatch(setUser(null))
+      navigate("/")
+      toast.success(res.data.message)
+        }
+      } catch (error) {
+        const errorMessage = error.response?.data?.message || error.message;
+      toast.error(errorMessage);
+      }
+    }
   return (
     <div className="bg-white">
       <div className="flex items-center justify-between mx-auto max-w-7xl h-16">
@@ -34,13 +55,13 @@ function Navbar() {
                                ( <Popover>
                                 <PopoverTrigger asChild>
                                   <Avatar className="cursor-pointer">
-                                    <AvatarImage src="https://github.com/shadcn.png" />
+                                    <AvatarImage src={user.profile.profilePhoto ? user.profile.profilePhoto : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLMI5YxZE03Vnj-s-sth2_JxlPd30Zy7yEGg&s"} />
                                   </Avatar>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-80">
                                 <div className="flex gap-4 space-y-2">
                                 <Avatar className="cursor-pointer">
-                                    <AvatarImage src="https://github.com/shadcn.png" />
+                                    <AvatarImage src={user.profile.profilePhoto ? user.profile.profilePhoto : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLMI5YxZE03Vnj-s-sth2_JxlPd30Zy7yEGg&s"} />
                                   </Avatar>
                                   <div>
                                   <h4 className="font medium">{user.fullName}</h4>
@@ -54,7 +75,7 @@ function Navbar() {
                                   </div>
                                   <div className="flex w-fit items-center gap-2 cursor-pointer">
                                       <LogOut/>
-                                  <Button variant="link"><Link to="/logout">Logout</Link></Button>
+                                  <Button variant="link" onClick={logoutHandler}>Logout</Button>
                                   </div>
                                 </div>
                                 </PopoverContent>

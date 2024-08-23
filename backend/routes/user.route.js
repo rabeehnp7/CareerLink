@@ -8,6 +8,6 @@ const router=express.Router()
 router.route('/register').post(singleUpload,register)
 router.route('/login').post(login)
 router.route('/logout').post(logout)
-router.route('/profile/updateProfile').post(Authentication,updateprofile)
+router.route('/profile/updateProfile').post(Authentication,singleUpload,updateprofile)
 
 export default router
