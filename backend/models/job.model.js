@@ -10,11 +10,11 @@ const jobSchema=mongoose.Schema({
         required:true
     },
     salary:{
-        type:Number,
+        type:String,
         required:true
     },
     experience:{
-        type:Number,
+        type:String,
         required:true
     },
     requirements:[{

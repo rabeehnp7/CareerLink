@@ -28,6 +28,51 @@ export const postJob = async (req,res) =>{
             success:true
         })
     } catch (error) {
+        console.log(error)
+    }
+}
+export const updateJob=async (req,res)=>{
+    try {
+        const {title,description,salary,requirements,experience,positions,jobType,location,companyId}=req.body
+        if( !title || !description || !salary || !requirements || !experience || !positions || !jobType || !location || !companyId){
+            res.status(400).json({
+                message:"Fill out the fields",
+                success:false
+            })
+        }
+        const jobId=req.params.id
+        const userId=req.userId
+        if(!jobId){
+            res.status(404).json({
+                message:"Job Id  required",
+                success:false
+            })
+        }
+        const updatedJob={
+            title,
+            description,
+            salary:Number(salary),
+            experience,
+            requirements:requirements.split(","),
+            positions,
+            jobType,
+            location,
+            company:companyId,
+            createdBy:userId
+        }
+        const job=await Jobs.findById(jobId)
+        if(!job){
+            res.status(404).json({
+                message:"Job could'nt find",
+                success:false
+            })
+        }
+        await Jobs.findByIdAndUpdate(jobId,updatedJob,{ new: true })
+        return res.status(200).json({
+            message:"Job data updated",
+            success:true
+        })
+    } catch (error) {
         
     }
 }
@@ -44,7 +89,7 @@ export const getAllJobs = async (req,res) =>{
             path:"company"
          }).sort({createdAt: -1})
          if(jobs.length === 0){
-            res.status(404).json({
+            return res.status(404).json({
                 message:"No job matches found",
                 success:false
             })
@@ -83,13 +128,16 @@ export const getJobById = async (req,res) =>{
 export const getAdminjobs =async(req,res) =>{
     try {
         const adminId=req.userId
-        const jobs =await Jobs.find({createdBy:adminId})
+        const jobs =await Jobs.find({createdBy:adminId}).populate({
+            path:"company"
+        })
         if(!jobs){
             res.status(404).json({
                 message:"No Jobs posted as of now",
                 success:false
             })
         }
+  
         return res.status(201).json({
             jobs,
             success:true

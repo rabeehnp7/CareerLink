@@ -1,4 +1,6 @@
 import { Company } from "../models/company.model.js"
+import cloudinary from "../utils/cloudinary.js"
+import getDataUri from "../utils/datauri.js"
 
 export const registerCompany = async (req,res)=>{
     try {
@@ -31,7 +33,7 @@ export const registerCompany = async (req,res)=>{
 }
 export const getCompany = async (req,res) => {
     const userId=req.userId
-    const company= await Company.findOne({userId})
+    const company= await Company.find({userId})
     if(!company){
         return res.status(404).json({
             message:"No companies found",
@@ -45,29 +47,41 @@ export const getCompany = async (req,res) => {
 }
 
 export const getCompanyById = async (req,res)=>{
-    const companyId=req.params.id
-    const company=await Company.findById(companyId)
-    if(!company){
-        return res.status(401).json({
-            message:"No companies found",
-            success:false
-        })
+    try {
+        const companyId=req.params.id
+        const company=await Company.findById(companyId)
+        if(!company){
+            return res.status(401).json({
+                message:"No companies found",
+                success:false
+            })
+        }
+        return res.status(200).json({
+            company,
+            success:true
+        }) 
+    } catch (error) {
+        console.log(error)
     }
-    return res.status(200).json({
-        company,
-        status:true
-    })
 }
 export const updateCompany = async (req,res) =>{
-    const {name,description,website,location}=req.body
-    const file =req.file
-    //cloudinary
+    try {
+        const {name,description,website,location}=req.body
+    const file=req.file
+    if(req.file){
+    const fileUri=getDataUri(file)
+    const cloudResponse =await cloudinary.uploader.upload(fileUri.content)
+    }
     const companyId = req.params.id
     const companyData={name,description,website,location}
+    if(req.file && cloudResponse){
+        companyData.logo=cloudResponse.secure_url
+    }
     const company = await Company.findByIdAndUpdate(companyId,companyData,{new:true})
     if(!company){
         return res.status(401).json({
-            message:"No companies found",
+            message:"company could'nt found",
+            company,
             success:false
         })
     }
@@ -75,4 +89,7 @@ export const updateCompany = async (req,res) =>{
         message:"company data updated",
         success:true
     })
+    } catch (error) {
+        console.log(error)
+    }
 }

@@ -23,6 +23,7 @@ function JobDetails() {
         });
         if (res.data.success) {
           dispatch(setSingleJob(res.data.job))
+          setIsApplied(res.data.job.applications.some((app) => app.applicant === user?._id));
         }
       } catch (error) {
         console.log(error?.respomse?.data?.message);
@@ -30,11 +31,6 @@ function JobDetails() {
     };
     fetchData();
   }, [id,dispatch]);
-  useEffect(() => {
-    if (singleJob) {
-      setIsApplied(singleJob.applications.some((app) => app.applicant === user?._id));
-    }
-  }, [singleJob, user?._id]);
   const applyHandler= async ()=>{
     try {
       const res=await axios.post(`${APPLICATION_API_ENDPOINT}/apply/${id}`,{},{
@@ -44,7 +40,7 @@ function JobDetails() {
         toast.success(res.data.message)
         setIsApplied(true)
         const upadtedApplication={...singleJob,applications:[...singleJob.applications,{applicant:user?._id}]}
-        setSingleJob(upadtedApplication)
+        dispatch(setSingleJob(upadtedApplication))
       }
     } catch (error) {
       toast.error(error?.response?.data?.message)

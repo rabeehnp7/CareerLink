@@ -5,8 +5,17 @@ import CatrgoryCarousel from './CatrgoryCarousel'
 import LatestJobs from './LatestJobs'
 import Footer from './shared/Footer'
 import useGetAllJobs from './hooks/useGetAllJobs'
+import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 
 function Home() {
+  const {user}=useSelector((store)=>store.auth)
+  const navigate=useNavigate()
+  useEffect(()=>{
+    if(user?.role==='recruiter'){
+      navigate("/admin/company")
+    }
+  },[])
     useGetAllJobs()
   return (
     <Fragment>
