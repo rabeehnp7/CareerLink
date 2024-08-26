@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Job from './Job';
 import Navbar from './shared/Navbar';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSearchQuery } from '@/store/jobSlice';
+import useGetAllJobs from './hooks/useGetAllJobs';
 
 function Browse() {
+  useGetAllJobs()
   const {allJobs}=useSelector((store)=>store.jobs)
+  const dispatch=useDispatch()
+  useEffect(()=>{
+    return ()=>{
+      dispatch(setSearchQuery(""))
+    }
+  },[allJobs])
   return (
     <div className="min-h-screen bg-white">
       <Navbar />

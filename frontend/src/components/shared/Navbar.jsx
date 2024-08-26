@@ -13,6 +13,7 @@ import { setUser } from "@/store/authSlice";
 import axios from "axios";
 import { USER_API_ENDPOINT } from "../constants/constants";
 import { toast } from "sonner";
+import { persistor } from "@/store/store";
 
 function Navbar() {
   const { user } = useSelector((state) => state.auth);
@@ -25,6 +26,7 @@ function Navbar() {
       });
       if (res.data.success) {
         dispatch(setUser(null));
+        persistor.purge()
         navigate("/");
         toast.success(res.data.message);
       }

@@ -10,23 +10,30 @@ import {
 } from "../ui/table";
 import { Popover, PopoverTrigger } from "../ui/popover";
 import { PopoverContent } from "@radix-ui/react-popover";
-import { Edit2, MoreHorizontal } from "lucide-react";
+import { Edit2, Eye, MoreHorizontal } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 function JobsTable() {
-  const {searchJobsByText}=useSelector((store)=>store.jobs)
-  const {allAdminJobs}=useSelector((store)=>store.jobs)
-  const [filterSearch,setFilterSearch]=useState(allAdminJobs)
-  const navigate=useNavigate()
-  useEffect(()=>{
-    const filteredJobs=allAdminJobs?.length >= 0 && allAdminJobs?.filter((job)=>{
-      if(!searchJobsByText){
-        return true
-      }
-      return job?.title?.toLowerCase().includes(searchJobsByText.toLowerCase()) || job?.company?.name?.toLowerCase().includes(searchJobsByText.toLowerCase())
-    })
-    setFilterSearch(filteredJobs)
-  },[searchJobsByText,allAdminJobs])
+  const { searchJobsByText } = useSelector((store) => store.jobs);
+  const { allAdminJobs } = useSelector((store) => store.jobs);
+  const [filterSearch, setFilterSearch] = useState(allAdminJobs);
+  const navigate = useNavigate();
+  useEffect(() => {
+    const filteredJobs =
+      allAdminJobs?.length >= 0 &&
+      allAdminJobs?.filter((job) => {
+        if (!searchJobsByText) {
+          return true;
+        }
+        return (
+          job?.title?.toLowerCase().includes(searchJobsByText.toLowerCase()) ||
+          job?.company?.name
+            ?.toLowerCase()
+            .includes(searchJobsByText.toLowerCase())
+        );
+      });
+    setFilterSearch(filteredJobs);
+  }, [searchJobsByText, allAdminJobs]);
   return (
     <div>
       <Table className="w-full text-left">
@@ -40,32 +47,46 @@ function JobsTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {
-            filterSearch.length <= 0 ? <span>No Jobs available</span> :
-            filterSearch.map((job)=>(
+          {filterSearch.length <= 0 ? (
+            <span>No Jobs available</span>
+          ) : (
+            filterSearch.map((job) => (
               <>
-              <TableRow>
-            <TableCell className="w-1/12">{job.company.name}
-            </TableCell>
-            <TableCell className="w-5/12">{job.title}</TableCell>
-            <TableCell className="w-3/12">{new Date(job.createdAt).toLocaleDateString('en-US')}</TableCell>
-            <TableCell className="w-3/12 text-right">
-              <Popover>
-                <PopoverTrigger>
-                  <MoreHorizontal />
-                </PopoverTrigger>
-                <PopoverContent className="w-32 flex justify-center items-center">
-                  <div onClick={()=>navigate(`/admin/jobs/${job._id}`)} className="flex items-center gap-2 cursor-pointer">
-                    <Edit2 className="w-4" />
-                    <span>Edit</span>
-                  </div>
-                </PopoverContent>
-              </Popover>
-            </TableCell>
-          </TableRow>
+                <TableRow>
+                  <TableCell className="w-1/12">{job.company.name}</TableCell>
+                  <TableCell className="w-5/12">{job.title}</TableCell>
+                  <TableCell className="w-3/12">
+                    {new Date(job.createdAt).toLocaleDateString("en-US")}
+                  </TableCell>
+                  <TableCell className="w-3/12 text-right">
+                    <Popover>
+                      <PopoverTrigger>
+                        <MoreHorizontal />
+                      </PopoverTrigger>
+                      <PopoverContent className="w-32 flex flex-col justify-center items-center bg-white shadow-md rounded-md">
+                        <div
+                          onClick={() => navigate(`/admin/jobs/${job._id}`)}
+                          className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-2 rounded-md w-full"
+                        >
+                          <Edit2 className="w-4" />
+                          <span>Edit</span>
+                        </div>
+                        <div
+                          onClick={() =>
+                            navigate(`/admin/jobs/${job._id}/applicants`)
+                          }
+                          className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-2 rounded-md w-full"
+                        >
+                          <Eye className="w-4" />
+                          <span>Applicants</span>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  </TableCell>
+                </TableRow>
               </>
             ))
-          }
+          )}
         </TableBody>
       </Table>
     </div>

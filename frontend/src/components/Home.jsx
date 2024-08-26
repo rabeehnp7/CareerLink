@@ -1,12 +1,12 @@
 import React, { Fragment, useEffect } from 'react'
 import Navbar from './shared/Navbar'
 import HeroSection from './HeroSection'
-import CatrgoryCarousel from './CatrgoryCarousel'
 import LatestJobs from './LatestJobs'
 import Footer from './shared/Footer'
 import useGetAllJobs from './hooks/useGetAllJobs'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import CategoryCarousel from './CategoryCarousel'
 
 function Home() {
   const {user}=useSelector((store)=>store.auth)
@@ -21,7 +21,7 @@ function Home() {
     <Fragment>
         <Navbar/>
         <HeroSection/>
-         <CatrgoryCarousel/>
+         <CategoryCarousel/>
         <LatestJobs/>
         <Footer/>
     </Fragment>

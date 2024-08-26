@@ -4,6 +4,7 @@ import storage from "redux-persist/lib/storage"; // default is localStorage
 import authReducer from "./authSlice";
 import jobReducer from "./jobSlice";
 import companyReducer from "./companySlice"
+import applicationReducer from "./applicationSlice";
 
 
 // Configuration for redux-persist
@@ -15,7 +16,8 @@ const persistConfig = {
 const rootReducer=combineReducers({
   auth:authReducer,
   jobs:jobReducer,
-  company:companyReducer
+  company:companyReducer,
+  applications:applicationReducer
 })
 
 const persistedReducer = persistReducer(persistConfig,rootReducer);

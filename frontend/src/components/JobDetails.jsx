@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { APPLICATION_API_ENDPOINT, JOB_API_ENDPOINT } from "./constants/constants";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -13,7 +13,7 @@ function JobDetails() {
   let { id } = useParams();
   const {singleJob}=useSelector((store)=>store.jobs)
   const dispatch=useDispatch()
-  let salary=(singleJob.salary*12)/100000
+  const navigate=useNavigate()
   const {user}=useSelector((store)=>store.auth)
   useEffect(() => {
     const fetchData = async () => {
@@ -31,19 +31,24 @@ function JobDetails() {
     };
     fetchData();
   }, [id,dispatch]);
+  let salary=(singleJob.salary*12)/100000
   const applyHandler= async ()=>{
-    try {
-      const res=await axios.post(`${APPLICATION_API_ENDPOINT}/apply/${id}`,{},{
-        withCredentials: true,
-      })
-      if(res.data.success){
-        toast.success(res.data.message)
-        setIsApplied(true)
-        const upadtedApplication={...singleJob,applications:[...singleJob.applications,{applicant:user?._id}]}
-        dispatch(setSingleJob(upadtedApplication))
+    if(!user){
+      navigate('/login')
+    }else{
+      try {
+        const res=await axios.post(`${APPLICATION_API_ENDPOINT}/apply/${id}`,{},{
+          withCredentials: true,
+        })
+        if(res.data.success){
+          toast.success(res.data.message)
+          setIsApplied(true)
+          const upadtedApplication={...singleJob,applications:[...singleJob.applications,{applicant:user?._id}]}
+          dispatch(setSingleJob(upadtedApplication))
+        }
+      } catch (error) {
+        toast.error(error?.response?.data?.message)
       }
-    } catch (error) {
-      toast.error(error?.response?.data?.message)
     }
   }
 
@@ -62,7 +67,7 @@ function JobDetails() {
         <Badge className="text-[#7209b7] font-bold" variant="ghost">{salary} LPA</Badge>
       </div>
     </div>
-    <Button
+     <Button
     onClick={applyHandler}
       disabled={isApplied}
       className={`rounded-lg ${isApplied ? 'bg-gray-600 cursor-not-allowed' : 'bg-[#7209b7] hover:bg-[#5d058f]'}`}
