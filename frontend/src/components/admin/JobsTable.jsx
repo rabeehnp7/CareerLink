@@ -10,14 +10,30 @@ import {
 } from "../ui/table";
 import { Popover, PopoverTrigger } from "../ui/popover";
 import { PopoverContent } from "@radix-ui/react-popover";
-import { Edit2, Eye, MoreHorizontal } from "lucide-react";
+import { Delete, Edit2, Eye, MoreHorizontal } from "lucide-react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { JOB_API_ENDPOINT } from "../constants/constants";
+import { toast } from "sonner";
 function JobsTable() {
   const { searchJobsByText } = useSelector((store) => store.jobs);
   const { allAdminJobs } = useSelector((store) => store.jobs);
   const [filterSearch, setFilterSearch] = useState(allAdminJobs);
   const navigate = useNavigate();
+  const HandleDelete=async(jobId)=>{
+    try {
+      const res=await axios.post(`${JOB_API_ENDPOINT}/${jobId}/delete`,{},{
+        withCredentials:true
+       })
+       if(res.data.success){
+        window.location.reload()
+        toast.success(res.data.message)
+       }
+    } catch (error) {
+      toast.error(error?.response?.data?.message)
+    }
+  }
   useEffect(() => {
     const filteredJobs =
       allAdminJobs?.length >= 0 &&
@@ -34,6 +50,7 @@ function JobsTable() {
       });
     setFilterSearch(filteredJobs);
   }, [searchJobsByText, allAdminJobs]);
+ 
   return (
     <div>
       <Table className="w-full text-left">
@@ -59,7 +76,7 @@ function JobsTable() {
                     {new Date(job.createdAt).toLocaleDateString("en-US")}
                   </TableCell>
                   <TableCell className="w-3/12 text-right">
-                    <Popover>
+                    <Popover >
                       <PopoverTrigger>
                         <MoreHorizontal />
                       </PopoverTrigger>
@@ -79,6 +96,14 @@ function JobsTable() {
                         >
                           <Eye className="w-4" />
                           <span>Applicants</span>
+                        </div>
+                        <div
+                          onClick={() =>HandleDelete(job._id)
+                          }
+                          className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-2 rounded-md w-full"
+                        >
+                          <Delete className="w-4" />
+                          <span>Delete</span>
                         </div>
                       </PopoverContent>
                     </Popover>

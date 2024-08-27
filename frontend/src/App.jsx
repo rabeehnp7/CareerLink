@@ -17,6 +17,7 @@ import AdminJobs from "./components/admin/AdminJobs";
 import CreateJob from "./components/admin/CreateJob";
 import AdminJobsEdit from "./components/admin/AdminJobsEdit";
 import Applicants from "./components/admin/Applicants";
+import ProtectedRoute from "./components/admin/ProtectedRoute";
 function App() {
   const appRouter = createBrowserRouter([
     {
@@ -49,31 +50,31 @@ function App() {
     },
     {
       path: "/admin/company",
-      element: <Company />,
+      element: <ProtectedRoute><Company /></ProtectedRoute>,
     },
     {
       path: "/admin/company/create",
-      element: <CreateComapny />,
+      element: <ProtectedRoute><CreateComapny /></ProtectedRoute>,
     },
     {
       path: "/admin/company/:id",
-      element: <CompanySetup/>,
+      element: <ProtectedRoute><CompanySetup/></ProtectedRoute>,
     },
     {
       path: "/admin/jobs",
-      element: <AdminJobs/>,
+      element: <ProtectedRoute><AdminJobs/></ProtectedRoute>,
     },
     {
       path: "/admin/jobs/create",
-      element: <CreateJob/>,
+      element: <ProtectedRoute><CreateJob/></ProtectedRoute>,
     },
     {
       path: "/admin/jobs/:id",
-      element: <AdminJobsEdit/>,
+      element: <ProtectedRoute><AdminJobsEdit/></ProtectedRoute>,
     },
     {
       path: "/admin/jobs/:id/applicants",
-      element: <Applicants/>,
+      element: <ProtectedRoute><Applicants/></ProtectedRoute>,
     },
   ]);
   return (

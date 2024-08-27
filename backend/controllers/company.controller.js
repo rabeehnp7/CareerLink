@@ -68,9 +68,10 @@ export const updateCompany = async (req,res) =>{
     try {
         const {name,description,website,location}=req.body
     const file=req.file
+    let cloudResponse
     if(req.file){
     const fileUri=getDataUri(file)
-    const cloudResponse =await cloudinary.uploader.upload(fileUri.content)
+    cloudResponse =await cloudinary.uploader.upload(fileUri.content)
     }
     const companyId = req.params.id
     const companyData={name,description,website,location}

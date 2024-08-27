@@ -103,10 +103,13 @@ export const logout = async (req,res)=>{
 export const updateprofile = async (req,res) =>{
     try {
         const {fullName,email,phoneNumber,skills,bio}=req.body
-
+        let cloudResponse
+        if(req.file){
         const file=req.file
         const fileUri=getDataUri(file)
-        const cloudResponse =await cloudinary.uploader.upload(fileUri.content)
+        cloudResponse =await cloudinary.uploader.upload(fileUri.content)
+        }
+        
         let skillsArray
         if(skills) {
             skillsArray=skills.split(",")
@@ -126,7 +129,7 @@ export const updateprofile = async (req,res) =>{
         if(email) user.email=email
         if(phoneNumber) user.phoneNumber=phoneNumber
 
-        if(cloudResponse){
+        if(req.file && cloudResponse){
             user.profile.resume=cloudResponse.secure_url
             user.profile.resumeOriginalName=file.originalname
         }

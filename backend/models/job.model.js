@@ -19,7 +19,6 @@ const jobSchema=mongoose.Schema({
     },
     requirements:[{
         type:String,
-        required:true
     }],
     positions:{
         type:Number,

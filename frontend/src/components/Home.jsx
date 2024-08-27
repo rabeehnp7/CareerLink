@@ -15,7 +15,7 @@ function Home() {
     if(user?.role==='recruiter'){
       navigate("/admin/company")
     }
-  },[])
+  },[navigate])
     useGetAllJobs()
   return (
     <Fragment>

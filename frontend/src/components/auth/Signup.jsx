@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../shared/Navbar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,7 +20,7 @@ function Signup() {
     role: "student",
     file: "",
   });
-  const { loading } = useSelector((state) => state.auth);
+  const { loading,user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const fileHandler = (e) => {
     setInput({ ...input, file: e.target.files?.[0] });
@@ -59,7 +59,11 @@ function Signup() {
       dispatch(setLoading(false));
     }
   };
-
+  useEffect(()=>{
+    if(user){
+      navigate("/")
+    }
+  },[])
   return (
     <div>
       <Navbar />

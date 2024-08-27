@@ -66,7 +66,7 @@ function CompaniesTable() {
                   <MoreHorizontal />
                 </PopoverTrigger>
                 <PopoverContent className="w-32 flex justify-center items-center">
-                  <div onClick={()=>navigate(`/admin/company/${company._id}`)} className="flex items-center gap-2 cursor-pointer">
+                  <div onClick={()=>navigate(`/admin/company/${company._id}`)} className="bg-white shadow-md rounded-md p-2 flex items-center gap-2 cursor-pointer">
                     <Edit2 className="w-4" />
                     <span>Edit</span>
                   </div>

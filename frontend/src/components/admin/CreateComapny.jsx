@@ -45,7 +45,7 @@ function CreateComapny() {
         className="my-2"
         value={name}
         onChange={(e)=>setName(e.target.value)}
-        placeholder="Google.inc,Mincrosoft..."
+        placeholder="Google Inc,Microsoft..."
         />
         <div className='flex items-center gap-2 my-10'>
             <Button onClick={()=>navigate("/admin/company")} variant="outline">Cancel</Button>

@@ -1,6 +1,6 @@
 import { setAllJobs } from '@/store/jobSlice'
 import axios from 'axios'
-import React, { useEffect } from 'react'
+import  { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { JOB_API_ENDPOINT } from '../constants/constants'
 
@@ -25,7 +25,7 @@ const useGetAllJobs = () => {
            }
         }
         fetchData()
-      },[dispatch])
+      },[dispatch,searchQuery])
 }
 
 export default useGetAllJobs

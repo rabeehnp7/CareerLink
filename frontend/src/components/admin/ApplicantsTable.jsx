@@ -1,5 +1,5 @@
 import { MoreHorizontal } from 'lucide-react'
-import React from 'react'
+import React, { useState } from 'react'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '../ui/table'
 import { PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Popover } from '@radix-ui/react-popover'
@@ -12,7 +12,7 @@ import { redirect, useNavigate } from 'react-router-dom'
 function ApplicantsTable() {
     const shortList = ["Accept", "Reject"]
     const {applicants}=useSelector((store)=>store.applications)
-    // const navigate=useNavigate()
+    const [open,setOpen]=useState(false)
     const statusHandler =async (statusRaw,id)=>{
         const status=statusRaw=="Accept"?"accepted":statusRaw=="Reject"?"rejected" :"pending"
         try {
@@ -25,6 +25,8 @@ function ApplicantsTable() {
             }
         } catch (error) {
             toast.error(error?.response?.data?.message)
+        }finally{
+            setOpen(false)
         }
     }
     return (
@@ -53,9 +55,9 @@ function ApplicantsTable() {
                         </TableCell>
                         <TableCell className="py-2 px-4 text-left">{new Date(application.createdAt).toLocaleDateString("en-US")}</TableCell>
                         <TableCell className="text-right py-2 px-4 cursor-pointer">
-                            <Popover>
+                            <Popover open={open}>
                                 <PopoverTrigger>
-                                    <MoreHorizontal />
+                                    <MoreHorizontal onClick={()=>setOpen(true)}/>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-32 bg-white shadow-md rounded-md p-2">
                                     {shortList.map((status, index) => (

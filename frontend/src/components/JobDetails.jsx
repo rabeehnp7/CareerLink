@@ -80,7 +80,7 @@ function JobDetails() {
     <div className="">
       <h1 className="font-bold my-1">Location: <span className="pl-4 font-normal text-gray-800">{singleJob.location}</span></h1>
       <h1 className="font-bold my-1">Experience: <span className="pl-4 font-normal text-gray-800">{singleJob.experience}</span></h1>
-      <h1 className="font-bold my-1">Requiremnts: <span className="pl-4 font-normal text-gray-800">{singleJob.requirements.join(",")}</span></h1>
+      <h1 className="font-bold my-1">Requirements: <span className="pl-4 font-normal text-gray-800">{singleJob.requirements.join(",")}</span></h1>
       <h1 className="font-bold my-1">Company: <span className="pl-4 font-normal text-gray-800">{singleJob.company.name}</span></h1>
       <h1 className="font-bold my-1">Total Applicants: <span className="pl-4 font-normal text-gray-800">{singleJob.applications.length}</span></h1>
       <h1 className="font-bold my-1">Posted Date: <span className="pl-4 font-normal text-gray-800">17-07-2024</span></h1>

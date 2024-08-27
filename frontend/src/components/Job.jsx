@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Button } from "./ui/button";
 import { Bookmark } from "lucide-react";
 import { Avatar, AvatarImage } from "./ui/avatar";
@@ -7,10 +7,11 @@ import { Link } from "react-router-dom";
 
 function Job({job}) {
   let salary=(job.salary*12)/100000
+  const dateAgo =Math.floor((new Date()-new Date(job.createdAt) ) / (24 * 60 * 60 * 1000)) 
   return (
     <div className="p-6 rounded-md shadow-lg bg-white border border-gray-200 flex flex-col">
       <div className="flex justify-between items-center mb-4">
-        <p className="text-gray-500 text-sm">2 days ago</p>
+        <p className="text-gray-500 text-sm">{dateAgo <=1 ?"Posted Today":`Posted ${dateAgo} days ago`}</p>
         <Button variant="outline" className="rounded-full" size="icon">
           <Bookmark />
         </Button>

@@ -1,3 +1,4 @@
+import { Application } from "../models/application.model.js"
 import { Jobs } from "../models/job.model.js"
 
 export const postJob = async (req,res) =>{
@@ -142,6 +143,42 @@ export const getAdminjobs =async(req,res) =>{
             jobs,
             success:true
         })
+    } catch (error) {
+        
+    }
+}
+export const deleteJob=async(req,res)=>{
+    try {
+        const jobId=req.params.id
+        if(!jobId){
+            res.status(400).json({
+                message:"Job id required",
+                success:false
+            })
+        }
+        let response
+        const {applications}=await Jobs.findById(jobId).select("applications")
+        if(applications.length==0){
+            response= await Jobs.findByIdAndDelete(jobId)
+            if(response){
+                return res.status(200).json({
+                    message:"Job deleted successfully",
+                    success:true
+                })
+            }
+        }else{
+            for(const applicationId of applications){
+                await Application.findByIdAndDelete(applicationId)
+            }
+            response= await Jobs.findByIdAndDelete(jobId)
+            if(response){
+                return res.status(200).json({
+                    message:"Job deleted successfully",
+                    success:true
+                })
+            }
+        }
+        
     } catch (error) {
         
     }
